@@ -1,0 +1,18 @@
+<div class="shell">
+  <header>
+    <span class="brand">🅰️ Angular 20 Demo</span>
+    <nav>
+      @for (link of links; track link.path) {
+        <a [routerLink]="link.path" routerLinkActive="active">{{ link.label }}</a>
+      }
+    </nav>
+  </header>
+
+  <main>
+    <router-outlet />
+  </main>
+
+  <footer class="site-footer">
+    Built with Angular 20 — signals, control flow, standalone, resource API.
+  </footer>
+</div>

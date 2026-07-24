@@ -16,6 +16,8 @@ export class App {
     { path: '/tasks-ngrx', label: 'NgRx (entities)' },
     { path: '/stats', label: 'Stats' },
     { path: '/users', label: 'Users' },
+    { path: '/users-rx', label: 'Users (rxResource)' },
+    { path: '/users-crud', label: 'Users (CRUD)' },
     { path: '/signals-lab', label: 'Signals Lab' },
     { path: '/about', label: 'About' },
   ];

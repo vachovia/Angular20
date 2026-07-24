@@ -44,8 +44,8 @@ import { TaskItem } from './task-item';
         @for (task of store.visibleTasks(); track task.id) {
           <app-task-item
             [task]="task"
-            (toggle)="store.toggle($event)"
-            (remove)="store.remove($event)"
+            (toggle)="toggle($event)"
+            (remove)="remove($event)"
           />
         } @empty {
           <li class="empty">No tasks here — add one above 👆</li>
@@ -89,6 +89,10 @@ export class Tasks {
 
   // Kept for demonstration; not strictly needed here.
   protected readonly justAdded = signal<string | null>(null);
+
+  toggle = (id: number) => this.store.toggle(id);
+
+  remove = (id: number) => this.store.remove(id);
 
   submit(): void {
     if (this.form.invalid) {

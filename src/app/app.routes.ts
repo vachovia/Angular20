@@ -41,6 +41,22 @@ export const routes: Routes = [
     loadComponent: () => import('./features/users/users').then((m) => m.Users),
   },
   {
+    path: 'users-rx',
+    title: 'Users (rxResource)',
+    loadComponent: () => import('./features/users-rx/users-rx').then((m) => m.UsersRx),
+  },
+  {
+    path: 'users-crud',
+    title: 'Users (CRUD + reload)',
+    loadComponent: () => import('./features/users-crud/users-crud').then((m) => m.UsersCrud),
+  },
+  {
+    // Route param bound into UserDetail's id input() via withComponentInputBinding.
+    path: 'users/:id',
+    title: 'User detail',
+    loadComponent: () => import('./features/user-detail/user-detail').then((m) => m.UserDetail),
+  },
+  {
     path: 'signals-lab',
     title: 'Signals Lab',
     // Functional resolver → its result binds to the `tip` input (input binding).

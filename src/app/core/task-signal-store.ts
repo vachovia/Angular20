@@ -1,20 +1,7 @@
 import { computed, effect, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import {
-  patchState,
-  signalStore,
-  withComputed,
-  withHooks,
-  withMethods,
-  withState,
-} from '@ngrx/signals';
-import {
-  addEntity,
-  removeEntity,
-  setAllEntities,
-  updateEntity,
-  withEntities,
-} from '@ngrx/signals/entities';
+import { patchState, signalStore, withComputed, withHooks, withMethods, withState } from '@ngrx/signals';
+import { addEntity, removeEntity, setAllEntities, updateEntity, withEntities } from '@ngrx/signals/entities';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { catchError, map, of, pipe, switchMap, tap } from 'rxjs';
 import { Priority, Task, TaskFilter } from './models';
@@ -75,6 +62,7 @@ function nextId(tasks: Task[]): number {
 }
 
 export const TaskSignalStore = signalStore(
+  
   { providedIn: 'root' },
 
   // Custom UI slice.

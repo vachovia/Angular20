@@ -38,7 +38,9 @@ import { TaskItem } from '../tasks/task-item';
             <option [value]="p">{{ p }}</option>
           }
         </select>
-        <button type="submit" [disabled]="form.invalid">Add</button>
+        <button type="submit" [disabled]="form.invalid || store.loading()">
+          {{ store.loading() ? 'Adding…' : 'Add' }}
+        </button>
       </form>
       @if (form.controls.title.touched && form.controls.title.invalid) {
         <p class="error">Title is required (min 2 chars).</p>
@@ -116,7 +118,12 @@ export class TasksNgrx {
       return;
     }
     const { title, priority } = this.form.getRawValue();
-    this.store.add(title, priority);
+
+    // Local-only add (synchronous, no network) — kept for comparison:
+    /* this.store.add(title, priority); */
+
+    // Async add: POSTs to the API, then inserts the created task.
+    this.store.addViaApi({ title, priority });
     this.form.reset({ title: '', priority: 'medium' });
   }
 }

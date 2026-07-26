@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { patchState, signalStore, withComputed, withHooks, withMethods, withState } from '@ngrx/signals';
 import { addEntity, removeEntity, setAllEntities, updateEntity, withEntities } from '@ngrx/signals/entities';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
-import { catchError, map, of, pipe, switchMap, tap } from 'rxjs';
+import { catchError, concatMap, filter, map, of, pipe, switchMap, tap } from 'rxjs';
 import { Priority, Task, TaskFilter } from './models';
 
 /**
@@ -23,7 +23,8 @@ import { Priority, Task, TaskFilter } from './models';
  */
 
 const STORAGE_KEY = 'angular-interview-demo.tasks.ngrx';
-const API_URL = 'https://jsonplaceholder.typicode.com/todos?_limit=8';
+const API_BASE = 'https://jsonplaceholder.typicode.com/todos';
+const API_URL = `${API_BASE}?_limit=8`;
 
 interface ApiTodo {
   id: number;
@@ -91,6 +92,9 @@ export const TaskSignalStore = signalStore(
   withMethods((store) => {
     const http = inject(HttpClient);
     return {
+      // Local-only add: synchronous, no network — inserts straight into the
+      // collection. This is the counterpart to `addViaApi` (below), which POSTs
+      // first; kept side by side to contrast sync vs. rxMethod/async flows.
       add(title: string, priority: Priority): void {
         const trimmed = title.trim();
         if (!trimmed) return;
@@ -139,6 +143,36 @@ export const TaskSignalStore = signalStore(
               catchError(() => {
                 patchState(store, { loading: false, error: 'Failed to load from API.' });
                 return of([]);
+              }),
+            ),
+          ),
+        ),
+      ),
+
+      // Async sibling of `add`: POSTs to the API, then inserts the created
+      // task into the collection. Mirrors loadFromApi's loading/error handling.
+      // concatMap queues concurrent adds so every distinct task is POSTed in
+      // order — no dropped/cancelled items (unlike switch/exhaustMap).
+      addViaApi: rxMethod<{ title: string; priority: Priority }>(
+        pipe(
+          map(({ title, priority }) => ({ title: title.trim(), priority })),
+          filter(({ title }) => title.length > 0),
+          tap(() => patchState(store, { loading: true, error: null })),
+          concatMap(({ title, priority }) =>
+            http.post<ApiTodo>(API_BASE, { title, completed: false }).pipe(
+              map((created): Task => ({
+                // jsonplaceholder echoes a synthetic id (usually 201); fall
+                // back to a local id so the collection stays consistent.
+                id: created.id ?? nextId(store.entities()),
+                title,
+                priority,
+                done: false,
+                createdAt: Date.now(),
+              })),
+              tap((task) => patchState(store, addEntity(task), { loading: false })),
+              catchError(() => {
+                patchState(store, { loading: false, error: 'Failed to add task.' });
+                return of(null);
               }),
             ),
           ),

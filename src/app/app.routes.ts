@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { hasTasksGuard } from './core/has-tasks.guard';
 import { tipResolver } from './core/tip.resolver';
+import { userResolver } from './core/user.resolver';
 
 /**
  * All routes are lazy-loaded standalone components via `loadComponent`
@@ -55,6 +56,33 @@ export const routes: Routes = [
     path: 'users/:id',
     title: 'User detail',
     loadComponent: () => import('./features/user-detail/user-detail').then((m) => m.UserDetail),
+  },
+  {
+    // Parent resolver shared with children: `userResolver` runs ONCE here, and
+    // both child tabs read the result via route-data inheritance
+    // (paramsInheritanceStrategy: 'always' in app.config.ts).
+    path: 'user-profile/:id',
+    title: 'User profile',
+    resolve: { user: userResolver },
+    loadComponent: () =>
+      import('./features/user-profile/user-profile-shell').then((m) => m.UserProfileShell),
+    children: [
+      { path: '', pathMatch: 'full', redirectTo: 'overview' },
+      {
+        path: 'overview',
+        title: 'User profile · Overview',
+        loadComponent: () =>
+          import('./features/user-profile/user-profile-overview').then(
+            (m) => m.UserProfileOverview,
+          ),
+      },
+      {
+        path: 'posts',
+        title: 'User profile · Posts',
+        loadComponent: () =>
+          import('./features/user-profile/user-profile-posts').then((m) => m.UserProfilePosts),
+      },
+    ],
   },
   {
     path: 'signals-lab',

@@ -6,6 +6,10 @@
   <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <!-- Origin of the dashboard's `priority` NgOptimizedImage hero. Warms up
+       DNS/TCP/TLS during HTML parse so the LCP image isn't blocked on the
+       handshake. Without it Angular logs NG02956 in dev mode. -->
+  <link rel="preconnect" href="https://picsum.photos">
 </head>
 <body>
   <app-root></app-root>

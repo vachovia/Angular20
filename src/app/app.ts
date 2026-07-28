@@ -18,6 +18,7 @@ export class App {
     { path: '/users', label: 'Users' },
     { path: '/users-rx', label: 'Users (rxResource)' },
     { path: '/users-crud', label: 'Users (CRUD)' },
+    { path: '/user-profile/1', label: 'User profile (resolver)' },
     { path: '/signals-lab', label: 'Signals Lab' },
     { path: '/about', label: 'About' },
   ];

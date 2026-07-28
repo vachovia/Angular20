@@ -16,6 +16,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
         <li>Functional guards &amp; interceptors</li>
         <li><code>httpResource()</code> — reactive async data</li>
         <li><code>provideRouter</code> + lazy <code>loadComponent</code></li>
+        <li>Functional <code>ResolveFn</code> on a parent route, inherited by children</li>
       </ul>
     </div>
   `,

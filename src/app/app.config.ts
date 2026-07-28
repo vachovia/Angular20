@@ -4,7 +4,7 @@ import {
   provideZonelessChangeDetection,
   // provideZoneChangeDetection, // ← previous (Zone-based) approach, see note below
 } from '@angular/core';
-import { provideRouter, withComponentInputBinding } from '@angular/router';
+import { provideRouter, withComponentInputBinding, withRouterConfig } from '@angular/router';
 import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
 
 import { routes } from './app.routes';
@@ -29,7 +29,16 @@ export const appConfig: ApplicationConfig = {
 
     // `withComponentInputBinding()` binds route params/query/data straight
     // into signal `input()`s on the routed component — no ActivatedRoute needed.
-    provideRouter(routes, withComponentInputBinding()),
+    //
+    // `paramsInheritanceStrategy: 'always'` makes a parent route's params AND
+    // resolved data visible to its children. Angular's default ('emptyOnly')
+    // only passes them down through component-less / empty-path parents, so the
+    // children of `user-profile/:id` would otherwise receive nothing.
+    provideRouter(
+      routes,
+      withComponentInputBinding(),
+      withRouterConfig({ paramsInheritanceStrategy: 'always' }),
+    ),
 
     // Modern HttpClient: fetch backend + a functional interceptor.
     provideHttpClient(withFetch(), withInterceptors([loggingInterceptor])),
